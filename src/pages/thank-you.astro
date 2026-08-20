@@ -1,0 +1,28 @@
+---
+// Not linked from the nav on purpose — this is a PayPal payment-return landing page.
+// PayPal's hosted buttons are configured (on PayPal's side, not visible in our HTML)
+// to redirect here after checkout across several pages (Donate, Shop, event sponsorships).
+// Since the domain isn't changing, that redirect keeps working as long as this route exists.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getEntry, render } from 'astro:content';
+
+const entry = await getEntry('pages', 'thank-you');
+const { Content } = await render(entry!);
+---
+
+<BaseLayout title={entry!.data.title} description={entry!.data.description}>
+  <section class="section container narrow">
+    <div class="prose">
+      <Content />
+    </div>
+    <a class="btn" href="/">Back to Home</a>
+  </section>
+</BaseLayout>
+
+<style>
+  .narrow {
+    max-width: 32rem;
+    text-align: center;
+  }
+  .btn { margin-top: 1rem; }
+</style>

@@ -58,3 +58,7 @@ The `public/CNAME` file (deployed as `dist/CNAME`) tells GitHub Pages this site 
 - **Media library** — only images/PDFs actually used by a page were pulled over from the old WordPress media library (191 items existed there; most were auto-generated thumbnail sizes not needed here).
 - **Instagram feed** — the homepage previously embedded a live Instagram feed via a WordPress plugin. For now the footer just links out to Instagram; a static-friendly embed widget (e.g. SnapWidget) can be added later if a live feed is wanted.
 - **Gallery / News pages** — these existed on the old site but had no content, so they weren't carried over.
+
+## `/thank-you/` — don't delete this one
+
+`src/pages/thank-you.astro` isn't linked from the nav, but it's not dead weight: it's the payment-return landing page several PayPal hosted buttons (Donate-adjacent, raffle/shop, event sponsorships) are configured — on PayPal's side, not visible in this repo — to redirect to after checkout. Since the domain isn't changing, that redirect keeps working automatically as long as this route stays live at the same path. If it's ever removed, check the return URL on each PayPal hosted button first.
