@@ -41,17 +41,26 @@ npm run preview    # serve the production build locally
 
 ## Deployment
 
-`.github/workflows/deploy.yml` builds and deploys to GitHub Pages on every push to `main`. One-time setup in the GitHub repo: **Settings → Pages → Source: GitHub Actions**.
+Hosted on **Cloudflare Pages** (or "Workers with static assets," depending on what Cloudflare's dashboard is steering new projects toward when you set this up — check there, both deploy this repo the same way). No workflow file needed in this repo — Cloudflare connects directly to the GitHub repo and builds it on push.
 
-## Custom domain (Cloudflare + GitHub Pages)
+One-time setup in the Cloudflare dashboard: **Workers & Pages → Create → Pages → Connect to Git** → pick this repo. Build settings:
 
-The `public/CNAME` file (deployed as `dist/CNAME`) tells GitHub Pages this site serves `heartshot.org`. To point the live domain here:
+| Setting | Value |
+| :-- | :-- |
+| Framework preset | Astro (auto-detected) |
+| Build command | `npm run build` |
+| Build output directory | `dist` |
+
+Every push to `main` deploys to production; every other branch/PR gets its own preview URL automatically.
+
+## Custom domain (Cloudflare DNS + Cloudflare Pages)
+
+Since hosting and DNS both live in Cloudflare, this is simpler than a cross-vendor setup:
 
 1. Move heartshot.org's nameservers to Cloudflare.
 2. **Before or during that switch, copy every existing MX and TXT record** from the current DNS host — heartshot.org has live email (e.g. troy@heartshot.org) and losing those records will break it.
-3. In Cloudflare DNS, add the records GitHub Pages requires for a custom domain (A records to GitHub's IPs, plus a CNAME for `www`) — see [GitHub's custom domain docs](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site).
-4. In the repo's **Settings → Pages**, set the custom domain to `heartshot.org` and enable "Enforce HTTPS."
-5. Confirm the site loads over HTTPS and send a test email to the domain to confirm mail still works.
+3. In the Pages project's **Custom domains** tab, add `heartshot.org` (and `www` if wanted) — Cloudflare adds the necessary DNS records itself since it already manages the zone.
+4. Confirm the site loads over HTTPS and send a test email to the domain to confirm mail still works.
 
 ## What's not migrated yet
 
