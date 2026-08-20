@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getEntry, render } from 'astro:content';
-import { site } from '../data/site';
 
 const entry = await getEntry('pages', 'subscribe');
 const { Content } = await render(entry!);
@@ -13,13 +12,16 @@ const { Content } = await render(entry!);
       <Content />
     </div>
 
+    <p class="error-banner" role="alert" hidden id="subscribe-error"></p>
+
     <!--
-      TODO(owner): This form currently points at a placeholder Mailchimp action URL
-      (see src/data/site.ts -> forms.mailchimpAction). Replace it with your real
-      embedded-form action + field names from Mailchimp: Audience -> Signup forms ->
-      Embedded forms -> copy the generated <form> markup and swap it in here.
+      Posts to the /api/subscribe Worker route (worker/index.js), which calls the
+      Mailchimp API server-side — see src/data wrangler.jsonc for the list ID and
+      README for the MAILCHIMP_API_KEY secret setup. Field names/requiredness here
+      match this list's actual merge fields (ADDRESS is a compound field requiring
+      addr1/city/state/zip; FNAME/LNAME required; PHONE optional).
     -->
-    <form action={site.forms.mailchimpAction} method="post" class="card" target="_blank">
+    <form action="/api/subscribe" method="post" class="card">
       <label for="EMAIL">Email Address *</label>
       <input type="email" name="EMAIL" id="EMAIL" required />
 
@@ -38,9 +40,9 @@ const { Content } = await render(entry!);
       <input type="text" name="ADDR1" id="ADDR1" placeholder="Street Address" required />
       <input type="text" name="ADDR2" placeholder="Address Line 2" />
       <div class="row row-3">
-        <input type="text" name="CITY" placeholder="City" />
-        <input type="text" name="STATE" placeholder="State" />
-        <input type="text" name="ZIP" placeholder="Zip / Postal" />
+        <input type="text" name="CITY" placeholder="City" required />
+        <input type="text" name="STATE" placeholder="State" required />
+        <input type="text" name="ZIP" placeholder="Zip" required />
       </div>
 
       <label for="PHONE">Phone Number — Optional</label>
@@ -64,7 +66,32 @@ const { Content } = await render(entry!);
     font-size: 0.85rem;
     color: var(--color-text-muted);
   }
+  .error-banner {
+    background: #fbeaea;
+    color: var(--color-maroon-dark);
+    border: 1px solid var(--color-maroon);
+    border-radius: 0.5rem;
+    padding: 0.75em 1em;
+    font-weight: 600;
+  }
   @media (max-width: 480px) {
     .row, .row-3 { grid-template-columns: 1fr; }
   }
 </style>
+
+<script>
+  // Static site — the /api/subscribe Worker redirects back here with ?error=...
+  // on failure, so the error state has to be read client-side, not at build time.
+  const params = new URLSearchParams(location.search);
+  const error = params.get('error');
+  if (error) {
+    const banner = document.getElementById('subscribe-error');
+    if (banner) {
+      banner.textContent =
+        error === 'missing-fields'
+          ? 'Please fill in all required fields.'
+          : 'Something went wrong signing you up — please try again, or email us directly.';
+      banner.hidden = false;
+    }
+  }
+</script>
