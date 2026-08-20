@@ -1,0 +1,159 @@
+---
+import { getCollection } from 'astro:content';
+import { site } from '../data/site';
+
+const currentPath = Astro.url.pathname;
+const hasPublishedEvents = (await getCollection('events', ({ data }) => data.published)).length > 0;
+
+const navItems = hasPublishedEvents
+  ? [...site.nav.slice(0, -1), { label: 'Events', href: '/events/' }, site.nav.at(-1)!]
+  : site.nav;
+---
+
+<header class="site-header">
+  <div class="container bar">
+    <a href="/" class="brand">
+      <img src="/images/logo/heart-shot-mark.png" alt="" class="mark" width="44" height="44" />
+      <span class="brand-text">
+        <span class="brand-name">{site.name}</span>
+        <span class="brand-tagline">{site.tagline}</span>
+      </span>
+    </a>
+
+    <button class="menu-toggle" id="menu-toggle" aria-expanded="false" aria-controls="primary-nav">
+      <span class="sr-only">Menu</span>
+      <span class="bars"></span>
+    </button>
+
+    <nav id="primary-nav" class="nav">
+      {navItems.map((item) => (
+        <a
+          href={item.href}
+          aria-current={currentPath === item.href ? 'page' : undefined}
+        >
+          {item.label}
+        </a>
+      ))}
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+    position: sticky;
+    top: 0;
+    z-index: 20;
+  }
+  .bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-block: 0.75rem;
+    gap: 1rem;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+    color: inherit;
+  }
+  .mark {
+    display: block;
+    border-radius: 999px;
+    flex-shrink: 0;
+  }
+  .brand-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.15;
+  }
+  .brand-name {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.25rem;
+    color: var(--color-text);
+  }
+  .brand-tagline {
+    font-size: 0.75rem;
+    color: var(--color-maroon);
+    font-weight: 600;
+  }
+  .nav {
+    display: flex;
+    gap: 1.5rem;
+  }
+  .nav a {
+    text-decoration: none;
+    color: var(--color-text);
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding-block: 0.25rem;
+    border-bottom: 2px solid transparent;
+  }
+  .nav a:hover,
+  .nav a[aria-current='page'] {
+    color: var(--color-maroon);
+    border-bottom-color: var(--color-maroon);
+  }
+  .menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+  }
+  .bars,
+  .bars::before,
+  .bars::after {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: var(--color-text);
+    position: relative;
+    transition: transform 0.15s ease;
+  }
+  .bars::before,
+  .bars::after {
+    content: '';
+    position: absolute;
+  }
+  .bars::before { top: -7px; }
+  .bars::after { top: 7px; }
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+
+  @media (max-width: 720px) {
+    .menu-toggle { display: block; }
+    .nav {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-border);
+      flex-direction: column;
+      padding: 1rem 1.5rem 1.5rem;
+      gap: 0.9rem;
+    }
+    .nav.open { display: flex; }
+    .brand-tagline { display: none; }
+  }
+</style>
+
+<script>
+  const toggle = document.getElementById('menu-toggle');
+  const nav = document.getElementById('primary-nav');
+  toggle?.addEventListener('click', () => {
+    const isOpen = nav?.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', String(Boolean(isOpen)));
+  });
+</script>

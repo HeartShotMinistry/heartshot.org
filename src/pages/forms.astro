@@ -1,0 +1,22 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getEntry, render } from 'astro:content';
+
+const entry = await getEntry('pages', 'forms');
+const { Content } = await render(entry!);
+---
+
+<BaseLayout title={entry!.data.title} description={entry!.data.description}>
+  <section class="section container">
+    <div class="prose page-prose">
+      <Content />
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-prose {
+    max-width: 42rem;
+    margin: 0 auto;
+  }
+</style>

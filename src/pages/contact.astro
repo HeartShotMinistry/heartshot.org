@@ -1,0 +1,52 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getEntry, render } from 'astro:content';
+import { site } from '../data/site';
+
+const entry = await getEntry('pages', 'contact');
+const { Content } = await render(entry!);
+---
+
+<BaseLayout title={entry!.data.title} description={entry!.data.description}>
+  <section class="section container narrow">
+    <div class="prose">
+      <Content />
+    </div>
+
+    <!--
+      TODO(owner): This form posts to a placeholder Formspree endpoint
+      (see src/data/site.ts -> forms.contactEndpoint). Create a form at
+      https://formspree.io and swap in your real endpoint URL before launch.
+    -->
+    <form action={site.forms.contactEndpoint} method="POST" class="card">
+      <label for="name">Your Name *</label>
+      <input type="text" id="name" name="name" required />
+
+      <label for="email">Your Email *</label>
+      <input type="email" id="email" name="_replyto" required />
+
+      <label for="subject">Subject</label>
+      <input type="text" id="subject" name="subject" />
+
+      <label for="message">Your Message</label>
+      <textarea id="message" name="message" rows="6"></textarea>
+
+      <button type="submit" class="btn">Send Message</button>
+    </form>
+
+    <p class="direct-contact">
+      Prefer email or a call? Reach us directly at
+      <a href={`mailto:${site.email}`}>{site.email}</a> or
+      <a href={`tel:${site.phone.replace(/[^0-9]/g, '')}`}>{site.phone}</a>.
+    </p>
+  </section>
+</BaseLayout>
+
+<style>
+  .narrow { max-width: 32rem; }
+  .direct-contact {
+    text-align: center;
+    color: var(--color-text-muted);
+    margin-top: 1.5rem;
+  }
+</style>

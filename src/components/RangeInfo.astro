@@ -1,0 +1,60 @@
+---
+import { site } from '../data/site';
+---
+
+<div class="range-info">
+  <h3>Range Information</h3>
+  {site.ranges.map((range) => (
+    <div class="range">
+      <h4>{range.name}</h4>
+      <address>{range.address.join(', ')}</address>
+      <ul class="hours">
+        {range.hours.map((h) => <li>{h}</li>)}
+      </ul>
+      <p class="note">{range.note}</p>
+    </div>
+  ))}
+  <p class="contact-line">
+    <a href={`tel:${site.phone.replace(/[^0-9]/g, '')}`}>{site.phone}</a>
+    &nbsp;·&nbsp;
+    <a href={`mailto:${site.email}`}>{site.email}</a>
+  </p>
+</div>
+
+<style>
+  .range-info h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.75em;
+  }
+  .range { margin-bottom: 1.25em; }
+  .range:last-of-type { margin-bottom: 1em; }
+  .range h4 {
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin: 0 0 0.3em;
+    color: var(--color-maroon);
+  }
+  address {
+    font-style: normal;
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    margin-bottom: 0.35em;
+  }
+  .hours {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 0.35em;
+    font-size: 0.9rem;
+  }
+  .note {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    margin-bottom: 0;
+  }
+  .contact-line {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin: 0;
+  }
+</style>

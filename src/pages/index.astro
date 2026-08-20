@@ -1,0 +1,71 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import RangeInfo from '../components/RangeInfo.astro';
+import { getEntry, render } from 'astro:content';
+import { site } from '../data/site';
+
+const entry = await getEntry('pages', 'home');
+const { Content } = await render(entry!);
+---
+
+<BaseLayout title={entry!.data.title} description={entry!.data.description}>
+  <section class="hero">
+    <div class="container hero-inner">
+      <img
+        src="/images/logo/heart-shot-logo-full.png"
+        alt={`${site.name} — ${site.tagline}`}
+        class="hero-logo"
+        width="588"
+        height="364"
+      />
+      <div class="hero-actions">
+        <a class="btn" href="/donate/">Donate</a>
+        <a class="btn btn-outline" href="/about/">Our Story</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container two-col">
+      <div class="prose">
+        <Content />
+      </div>
+      <aside class="card">
+        <RangeInfo />
+      </aside>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    background: linear-gradient(180deg, var(--color-taupe-light), var(--color-bg));
+    padding: 3rem 0 2.5rem;
+    text-align: center;
+  }
+  .hero-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.75rem;
+  }
+  .hero-logo {
+    width: min(420px, 90%);
+    height: auto;
+  }
+  .hero-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .two-col {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: 2.5rem;
+    align-items: start;
+  }
+  @media (max-width: 720px) {
+    .two-col { grid-template-columns: 1fr; }
+  }
+</style>
