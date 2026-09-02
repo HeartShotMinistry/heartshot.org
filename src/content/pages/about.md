@@ -17,7 +17,7 @@ Rooted in God's Word, Guided by the Holy Spirit, Yoked to Jesus Christ, Covered 
 
 ## The Heart Shot Ministry Model
 
-We are open 3 days a week between, free to the public. We provide all the equipment needed, also free of charge, but archers can also bring their own equipment. Our sessions include archery instruction and practice, lessons from scripture and prayer, and a shooting incentive program.
+We are open 3 days a week, free to the public. We provide all the equipment needed, also free of charge, but archers can also bring their own equipment. Our sessions include archery instruction and practice, lessons from scripture and prayer, and a shooting incentive program.
 
 We host donation-based private groups and travel with our mobile program to churches, retreats, and camps throughout the country.
 
