@@ -1,6 +1,6 @@
 ---
 title: Thank You
-description: Thank you for your donation to Heart Shot Ministry.
+description: Thank you for your contribution to Heart Shot Ministry.
 ---
 
-## Thank you for your donation!
+## Thank you for your contribution!

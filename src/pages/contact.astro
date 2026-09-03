@@ -15,6 +15,9 @@ const { Content } = await render(entry!);
 
     <!-- Posts to Formspree (see src/data/site.ts -> forms.contactEndpoint). -->
     <form action={site.forms.contactEndpoint} method="POST" class="card">
+      {/* Without this, Formspree shows its own generic thanks page instead of ours. */}
+      <input type="hidden" name="_next" value={`${site.url}/thank-you/`} />
+
       <label for="name">Your Name *</label>
       <input type="text" id="name" name="name" required />
 

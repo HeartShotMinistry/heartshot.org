@@ -1,8 +1,13 @@
 ---
-// Not linked from the nav on purpose — this is a PayPal payment-return landing page.
-// PayPal's hosted buttons are configured (on PayPal's side, not visible in our HTML)
-// to redirect here after checkout across several pages (Donate, Shop, event sponsorships).
-// Since the domain isn't changing, that redirect keeps working as long as this route exists.
+// Not linked from the nav on purpose — this is a shared landing page for anything
+// that ends in a contribution, not just donations:
+// - PayPal's hosted buttons are configured (on PayPal's side, not visible in our
+//   HTML) to redirect here after checkout, across several pages (Donate, Shop,
+//   event sponsorships). Since the domain isn't changing, that redirect keeps
+//   working as long as this route exists.
+// - The Subscribe form's Worker (worker/index.js) redirects here on success.
+// - The Contact form redirects here via Formspree's `_next` field (contact.astro).
+// Copy here should stay generic enough to make sense after any of the three.
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getEntry, render } from 'astro:content';
 
