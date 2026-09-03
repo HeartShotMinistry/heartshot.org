@@ -1,0 +1,34 @@
+---
+title: Trivia Night
+published: true
+featured: true
+summary: Sponsor a table or buy tickets for the Heart Shot Ministry trivia night fundraiser.
+flyer: /images/events/trivia-night-flyer.jpg
+---
+
+import PayPalButton from '../../components/PayPalButton.astro';
+
+Sponsors! Please complete the [sponsorship form](https://docs.google.com/forms/d/e/1FAIpQLSeSOuESYNiXovbAB1eT8H6J3QhigLtSGaF6ij1pIIoua5BulA/viewform).
+
+### Raffle Tickets — $10 each
+
+Choose quantity at checkout.
+
+<PayPalButton
+  hostedButtonId="4BCYZPPHUYHC6"
+  buttonLabel="Buy Now with PayPal"
+  fields={[
+    {
+      type: 'select',
+      label: 'How Many?',
+      choices: [
+        { value: 'Single', label: 'Single — $10.00 USD' },
+        { value: 'Table', label: 'Table — $80.00 USD' },
+        { value: 'Round Sponsor', label: 'Round Sponsor — $100.00 USD' },
+        { value: 'Round Sponsor plus Team Entry', label: 'Round Sponsor plus Team Entry — $150.00 USD' },
+      ],
+    },
+    { type: 'text', label: 'Team Name (or Sponsor name)' },
+    { type: 'text', label: 'Email address' },
+  ]}
+/>

@@ -1,0 +1,33 @@
+---
+title: New Year's Celebration
+published: false
+featured: false
+summary: Sponsor or attend the Heart Shot Ministry New Year's Celebration.
+flyer: /images/events/new-years-flyer.png
+---
+
+import PayPalButton from '../../components/PayPalButton.astro';
+
+{/* Last run: 2025. Update date, pricing, and PayPal button ID before re-publishing. */}
+
+[Sponsorship Form](https://forms.gle/1NmPUcenxgorAjNR8)
+
+Checks (payable to Heart Shot Ministry) can be mailed to:
+
+27580 95th Ave, Donahue, IA 52746
+
+Or use the PayPal link below.
+
+<PayPalButton
+  hostedButtonId="4NMVH5RKE3V7C"
+  fields={[
+    {
+      type: 'select',
+      label: 'Sponsorship Level',
+      choices: [
+        { value: 'Silver', label: 'Silver — $100.00 USD' },
+        { value: 'Gold (Includes Family Entry)', label: 'Gold (includes family entry) — $200.00 USD' },
+      ],
+    },
+  ]}
+/>
