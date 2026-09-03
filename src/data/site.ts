@@ -46,8 +46,7 @@ export const site = {
   },
 
   forms: {
-    // TODO(owner): replace with the real Formspree form ID (formspree.io -> new form).
-    contactEndpoint: 'https://formspree.io/f/REPLACE_ME',
+    contactEndpoint: 'https://formspree.io/f/xkjnbvdr',
     // Subscribe form posts to /api/subscribe (worker/index.js), which calls the
     // Mailchimp API directly — list ID lives in wrangler.jsonc, API key is a
     // Cloudflare secret (not here). No client-facing endpoint needed.
