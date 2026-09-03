@@ -1,6 +1,6 @@
 # heartshot.org
 
-Heart Shot Ministry's website — a static [Astro](https://astro.build) site, built to replace the old WordPress/GoDaddy setup with free hosting and DNS both on Cloudflare (Workers with static assets). Source lives at [github.com/dhoepp/heartshot](https://github.com/dhoepp/heartshot); Cloudflare deploys automatically on push, currently live at `heartshot.dustin-hoeppner.workers.dev` pending the custom-domain cutover.
+Heart Shot Ministry's website — a static [Astro](https://astro.build) site, built to replace the old WordPress/GoDaddy setup with free hosting and DNS both on Cloudflare (Workers with static assets). Source lives at [github.com/HeartShotMinistry/heartshot.org](https://github.com/HeartShotMinistry/heartshot.org); Cloudflare deploys automatically on push, currently live at `heartshot.dustin-hoeppner.workers.dev` pending the custom-domain cutover.
 
 ## Editing content (no coding required)
 
@@ -8,11 +8,28 @@ Most of what you'd want to change lives in plain files, editable right in GitHub
 
 - **Page text** — `src/content/pages/*.md`. One file per page (home, about, forms, donate, subscribe, contact). Edit the text between the `---` frontmatter and the content; it's plain Markdown (blank line between paragraphs, `##` for a heading, `[link text](https://example.com)` for a link).
 - **Phone, address, hours, social links, donation links** — `src/data/site.ts`. This one file feeds the header, footer, and donate page, so a change here updates everywhere at once.
-- **Seasonal events** (Golf Outing, Trivia Night, Archery Camp, New Year's) — `src/content/events/*.md`. Each has `published: false` in its frontmatter. When it's time to run that event again:
-  1. Update the dates, pricing, and any registration/PayPal links in the file.
+- **Seasonal events** (Golf Outing, Trivia Night, Archery Camp, New Year's) — `src/content/events/*.md` (or `.mdx` for ones with a PayPal form — see below). Each has `published: false` and `featured: false` in its frontmatter. When it's time to run that event again:
+  1. Update the dates, pricing, and any registration/PayPal details in the file.
   2. Change `published: false` to `published: true`.
-  3. Commit. The page goes live at `/events/<file-name>/` and an "Events" link automatically appears in the nav.
-  4. When the event's over, flip it back to `false` — the page disappears from the site (not just the menu) until next time.
+  3. Commit. The page goes live at `/events/<file-name>/` and an "Events" link appears in the nav.
+  4. **To actively promote it** (like Trivia Night right now) — also flip `featured: true`. That's the only step needed: the homepage flyer and the highlighted nav button (replacing the plain "Events" link) both follow automatically from this one field. Only mark one event `featured` at a time.
+  5. When the event's over, flip both back to `false` — the page disappears from the site (not just the menu) until next time.
+
+- **PayPal buttons on event pages** — instead of raw PayPal HTML, these use a `<PayPalButton />` component (`src/components/PayPalButton.astro`) with structured props, so editing nearby text can't accidentally break the payment form:
+
+  ```mdx
+  <PayPalButton
+    hostedButtonId="4BCYZPPHUYHC6"
+    fields={[
+      { type: 'select', label: 'How Many?', choices: [
+        { value: 'Single', label: 'Single — $10.00 USD' },
+      ] },
+      { type: 'text', label: 'Team Name' },
+    ]}
+  />
+  ```
+
+  `mode` is `"buy"` (default), `"pay"`, or `"donate"` (changes the button label and PayPal endpoint — `"donate"` skips `fields` entirely, it's just a bare donate button). `fields` is optional and ordered — PayPal numbers them `os0`/`os1`/`os2`... by position, which the component handles for you. Any file using this component needs the `.mdx` extension (not `.md`), with `import PayPalButton from '../../components/PayPalButton.astro';` on its own line right after the closing `---` of the frontmatter — see `trivia-night.mdx` for a full example.
 
 Any change committed to `main` redeploys the live site automatically within a couple of minutes (see Deployment below).
 
