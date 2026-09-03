@@ -8,7 +8,17 @@ export default {
       if (request.method !== 'POST') {
         return new Response('Method Not Allowed', { status: 405 });
       }
-      return handleSubscribe(request, env, url);
+      try {
+        return await handleSubscribe(request, env, url);
+      } catch (err) {
+        // Last-resort catch: without this, any unexpected failure here (a
+        // missing secret, a Mailchimp outage, a bad request body) surfaces to
+        // the visitor as Cloudflare's generic "Worker threw exception" page
+        // instead of something diagnosable. console.error goes to this
+        // Worker's Logs tab in the Cloudflare dashboard (or `wrangler tail`).
+        console.error('subscribe handler failed:', err);
+        return redirectWithError(url, 'mailchimp-error');
+      }
     }
 
     return env.ASSETS.fetch(request);
@@ -16,6 +26,14 @@ export default {
 };
 
 async function handleSubscribe(request, env, url) {
+  // Fails loudly (in the log, not to the visitor) if the secret isn't set on
+  // *this* Worker — e.g. set via the dashboard on a differently-named project
+  // than the one actually serving traffic.
+  if (!env.MAILCHIMP_API_KEY) {
+    console.error('MAILCHIMP_API_KEY is not set on this Worker.');
+    return redirectWithError(url, 'mailchimp-error');
+  }
+
   const form = await request.formData();
   const field = (name) => (form.get(name) || '').toString().trim();
 
@@ -63,6 +81,9 @@ async function handleSubscribe(request, env, url) {
   );
 
   if (!mailchimpResponse.ok) {
+    // Log Mailchimp's own error body — e.g. a malformed merge field — instead
+    // of just knowing *that* it failed.
+    console.error('Mailchimp API error:', mailchimpResponse.status, await mailchimpResponse.text());
     return redirectWithError(url, 'mailchimp-error');
   }
 
