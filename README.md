@@ -35,20 +35,20 @@ Any change committed to `main` redeploys the live site automatically within a co
 
 ## Before this goes live
 
-- **Contact form** (`src/pages/contact.astro`) — still posts to a placeholder Formspree endpoint. Create a free form at [formspree.io](https://formspree.io) and paste the real endpoint into `forms.contactEndpoint` in `src/data/site.ts`. It's a plain HTML `<form>` pointed at a config URL, so swapping it for a Worker route later (matching how Subscribe works now) is a small, contained change — not a template rewrite.
+- **Contact form** (`src/pages/contact.astro`) — done. Posts to a real Formspree endpoint (`forms.contactEndpoint` in `src/data/site.ts`). It's a plain HTML `<form>` pointed at a config URL, so swapping it for a Worker route later (matching how Subscribe works now) is a small, contained change — not a template rewrite.
 
-- **Subscribe form** (`src/pages/subscribe.astro` → `POST /api/subscribe` → `worker/index.js`) — this one's actually wired up, not a placeholder. It calls the Mailchimp API server-side with the real audience (`MAILCHIMP_LIST_ID` in `wrangler.jsonc`, confirmed against this list's actual merge fields — `ADDRESS` is a compound field, not flat `ADDR1`/`CITY`/etc., which is why the Worker assembles them into a nested object before calling Mailchimp). **One thing still needed for it to work in production:** the `MAILCHIMP_API_KEY` secret has to be set on the Cloudflare Worker project itself — a `.dev.vars` file locally (already set up, gitignored) only covers `wrangler dev`, it doesn't carry over to the deployed Worker. Set it with:
+- **Subscribe form** (`src/pages/subscribe.astro` → `POST /api/subscribe` → `worker/index.js`) — wired up and confirmed working against the live Mailchimp audience (`MAILCHIMP_LIST_ID` in `wrangler.jsonc`, matched against this list's actual merge fields — `ADDRESS` is a compound field, not flat `ADDR1`/`CITY`/etc.). The `MAILCHIMP_API_KEY` secret needs to be set on the Cloudflare Worker project itself — a `.dev.vars` file locally (already set up, gitignored) only covers `wrangler dev`, it doesn't carry over to the deployed Worker. Set it with:
 
   ```sh
   npx wrangler secret put MAILCHIMP_API_KEY
   ```
 
-  (or via the Cloudflare dashboard: your Worker project → **Settings → Variables and Secrets**). Paste the same key that's in your local `.env`/`.dev.vars`.
+  (or via the Cloudflare dashboard: the Worker project → **Settings → Variables and Secrets**). **Set it on the project that's actually live** — check the Worker's own URL to confirm which project name that is; it's changed once already (was `heartshot`, is currently `heartshot-org`), and setting the secret on the wrong-named project produces no error, just a Worker that can't reach Mailchimp.
 
-  Once that's set, test it for real with a throwaway/your-own email — a live submission does write a real contact into the Mailchimp audience (and will trigger any welcome-email automation on that list), so it's worth doing deliberately rather than as an afterthought:
+  To test it for real: a live submission does write a real contact into the Mailchimp audience (and will trigger any welcome-email automation on that list), so do this deliberately with a throwaway/your-own email, not as an afterthought:
 
   ```sh
-  curl -i -X POST https://heartshot.dustin-hoeppner.workers.dev/api/subscribe \
+  curl -i -X POST https://heartshot-org.dustin-hoeppner.workers.dev/api/subscribe \
     -d "EMAIL=you@example.com" -d "FNAME=Test" -d "LNAME=Subscriber" \
     -d "ADDR1=123 Main St" -d "CITY=Davenport" -d "STATE=IA" -d "ZIP=52806"
   ```
