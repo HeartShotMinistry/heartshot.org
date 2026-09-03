@@ -1,0 +1,92 @@
+---
+// Reusable PayPal "hosted button" form — replaces copy-pasted raw PayPal HTML
+// that used to live directly in event/page Markdown. Keeps a non-technical
+// editor's prose edits from being able to accidentally break a payment form,
+// and keeps every instance's structure/styling consistent in one place.
+//
+// PayPal's classic hosted-button protocol takes an ordered set of custom
+// fields, each posted as onN (the field's label) + osN (its value) — N being
+// the field's position (0, 1, 2...). `fields` below mirrors that directly: a
+// dropdown of priced choices, or a free-text input, in whatever order they
+// should appear in the form.
+interface SelectField {
+  type: 'select';
+  label: string;
+  choices: { value: string; label: string }[];
+}
+interface TextField {
+  type: 'text';
+  label: string;
+  maxlength?: number;
+}
+type Field = SelectField | TextField;
+
+interface Props {
+  hostedButtonId: string;
+  // 'buy'/'pay' both post to the standard hosted-button endpoint (label only
+  // differs); 'donate' posts to PayPal's donate endpoint instead, which
+  // doesn't take the cmd/currency_code fields the others need.
+  mode?: 'buy' | 'pay' | 'donate';
+  buttonLabel?: string;
+  fields?: Field[];
+}
+
+const { hostedButtonId, mode = 'buy', buttonLabel, fields = [] }: Props = Astro.props;
+
+const action = mode === 'donate' ? 'https://www.paypal.com/donate' : 'https://www.paypal.com/cgi-bin/webscr';
+const defaultLabel =
+  mode === 'donate' ? 'Donate with PayPal' : mode === 'pay' ? 'Pay Now with PayPal' : 'Buy Now with PayPal';
+const label = buttonLabel ?? defaultLabel;
+---
+
+<form class="paypal-form" action={action} method="post" target="_top">
+  {mode !== 'donate' && <input type="hidden" name="cmd" value="_s-xclick" />}
+  <input type="hidden" name="hosted_button_id" value={hostedButtonId} />
+
+  {
+    fields.map((field, i) => (
+      <div class="field">
+        <label for={`${hostedButtonId}-${i}`}>{field.label}</label>
+        {field.type === 'select' ? (
+          <select id={`${hostedButtonId}-${i}`} name={`os${i}`}>
+            {field.choices.map((choice) => (
+              <option value={choice.value}>{choice.label}</option>
+            ))}
+          </select>
+        ) : (
+          <input type="text" id={`${hostedButtonId}-${i}`} name={`os${i}`} maxlength={field.maxlength ?? 200} />
+        )}
+        <input type="hidden" name={`on${i}`} value={field.label} />
+      </div>
+    ))
+  }
+
+  {mode !== 'donate' && <input type="hidden" name="currency_code" value="USD" />}
+  <button type="submit" class="btn">{label}</button>
+</form>
+
+<style>
+  .paypal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    max-width: 24rem;
+    margin-block: 1.25rem;
+  }
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+  .field label {
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+  .field select,
+  .field input[type='text'] {
+    padding: 0.5em 0.7em;
+    border: 1px solid var(--color-border);
+    border-radius: 0.4rem;
+    font: inherit;
+  }
+</style>

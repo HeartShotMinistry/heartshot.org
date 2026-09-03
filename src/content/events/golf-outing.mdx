@@ -1,0 +1,67 @@
+---
+title: Annual Golf Outing
+published: false
+featured: false
+summary: Register, pay, and sponsor the Heart Shot Ministry golf outing.
+flyer: /images/events/golf-outing-flyer.png
+---
+
+import PayPalButton from '../../components/PayPalButton.astro';
+
+{/* Last run: 2026 pricing/links below. Update dates, pricing, and PayPal button IDs before re-publishing each year. */}
+
+## Register Here
+
+Please click the online registration form link below to register, or download a printable version.
+
+[Online Registration Form (Google Forms)](https://forms.gle/LTiDuycXFZeWeUBY8)
+
+[Printable Registration Form (PDF)](/files/golf-outing-registration-2026.pdf)
+
+## Pay Here
+
+Golfers are required to purchase an entry fee below. Select "Single Entry" for one golfer, or "Team of 4." For a specific number, select "Single Entry" and edit the quantity before checking out.
+
+<PayPalButton
+  hostedButtonId="KHRMZKUZKZUBQ"
+  mode="pay"
+  fields={[
+    {
+      type: 'select',
+      label: 'Entree Fee',
+      choices: [
+        { value: 'Single Entry', label: 'Single Entry — $100.00 USD' },
+        { value: 'Team of 4', label: 'Team of 4 — $400.00 USD' },
+      ],
+    },
+  ]}
+/>
+
+Below you can select sponsorship options. Each "Event Sponsor" level includes a team of 4.
+
+<PayPalButton
+  hostedButtonId="8X2QW4E37A2AN"
+  mode="pay"
+  fields={[
+    {
+      type: 'select',
+      label: 'Golf Outing Sponsorship Options',
+      choices: [
+        { value: 'Hole Sponsor', label: 'Hole Sponsor — $250.00 USD' },
+        { value: 'Golf Cart Sponsor', label: 'Golf Cart Sponsor — $500.00 USD' },
+        { value: 'Corporate Team (team of 4 plus hole sponsor)', label: 'Corporate Team (team of 4 + hole sponsor) — $500.00 USD' },
+        { value: 'Bronze Event Sponsor (includes team of 4)', label: 'Bronze Event Sponsor (team of 4) — $1,000.00 USD' },
+        { value: 'Silver Event Sponsor (includes team of 4)', label: 'Silver Event Sponsor (team of 4) — $1,500.00 USD' },
+        { value: 'Gold Event Sponsor (includes team of 4)', label: 'Gold Event Sponsor (team of 4) — $2,000.00 USD' },
+        { value: 'Platinum Event Sponsor (includes team of 4)', label: 'Platinum Event Sponsor (team of 4) — $2,500.00 USD' },
+        { value: 'Food & Beverage Sponsor', label: 'Food & Beverage Sponsor — $750.00 USD' },
+      ],
+    },
+  ]}
+/>
+
+## Donations
+
+<PayPalButton hostedButtonId="SLDKXBH4KX5HL" mode="donate" />
+
+Checks can be mailed to Heart Shot Ministry, 27580 95th Ave, Donahue, IA. Please specify "golf outing" on the memo line.

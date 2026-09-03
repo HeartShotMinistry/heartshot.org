@@ -3,10 +3,20 @@ import { getCollection } from 'astro:content';
 import { site } from '../data/site';
 
 const currentPath = Astro.url.pathname;
-const hasPublishedEvents = (await getCollection('events', ({ data }) => data.published)).length > 0;
+const publishedEvents = await getCollection('events', ({ data }) => data.published);
+// At most one event should be marked featured at a time (see content.config.ts) —
+// if more than one is, this just takes the first and the rest fall back to the
+// plain "Events" link below.
+const featuredEvent = publishedEvents.find((event) => event.data.featured);
 
-const navItems = hasPublishedEvents
-  ? [...site.nav.slice(0, -1), { label: 'Events', href: '/events/' }, site.nav.at(-1)!]
+const eventsNavItem = featuredEvent
+  ? { label: featuredEvent.data.title, href: `/events/${featuredEvent.id}/`, highlight: true }
+  : publishedEvents.length > 0
+    ? { label: 'Events', href: '/events/' }
+    : null;
+
+const navItems = eventsNavItem
+  ? [...site.nav.slice(0, -1), eventsNavItem, site.nav.at(-1)!]
   : site.nav;
 ---
 
@@ -29,6 +39,7 @@ const navItems = hasPublishedEvents
       {navItems.map((item) => (
         <a
           href={item.href}
+          class={item.highlight ? 'highlight' : undefined}
           aria-current={currentPath === item.href ? 'page' : undefined}
         >
           {item.label}
@@ -97,6 +108,22 @@ const navItems = hasPublishedEvents
   .nav a[aria-current='page'] {
     color: var(--color-maroon);
     border-bottom-color: var(--color-maroon);
+  }
+  /* Promotes a featured event (see content.config.ts `featured` flag) to a
+     filled CTA pill instead of a plain text link, so it stands out from the
+     rest of the nav — same idea as inverting colors on a nav button. */
+  .nav a.highlight {
+    color: #fff;
+    background: var(--color-maroon);
+    padding: 0.4rem 0.9rem;
+    border-radius: 999px;
+    border-bottom: none;
+  }
+  .nav a.highlight:hover,
+  .nav a.highlight[aria-current='page'] {
+    color: #fff;
+    background: var(--color-maroon-dark);
+    border-bottom: none;
   }
   .menu-toggle {
     display: none;

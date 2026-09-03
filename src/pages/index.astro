@@ -1,11 +1,16 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import RangeInfo from '../components/RangeInfo.astro';
-import { getEntry, render } from 'astro:content';
+import { getEntry, getCollection, render } from 'astro:content';
 import { site } from '../data/site';
 
 const entry = await getEntry('pages', 'home');
 const { Content } = await render(entry!);
+
+// See content.config.ts — flipping `featured: true` on a published event
+// promotes it here (and to a highlighted nav button in Header.astro).
+const featuredEvent = (await getCollection('events', ({ data }) => data.published))
+  .find((event) => event.data.featured);
 ---
 
 <BaseLayout title={entry!.data.title} description={entry!.data.description}>
@@ -24,6 +29,16 @@ const { Content } = await render(entry!);
       </div>
     </div>
   </section>
+
+  {featuredEvent?.data.flyer && (
+    <section class="featured-event">
+      <div class="container">
+        <a href={`/events/${featuredEvent.id}/`}>
+          <img src={featuredEvent.data.flyer} alt={featuredEvent.data.title} />
+        </a>
+      </div>
+    </section>
+  )}
 
   <section class="section">
     <div class="container two-col">
@@ -58,6 +73,17 @@ const { Content } = await render(entry!);
     gap: 1rem;
     flex-wrap: wrap;
     justify-content: center;
+  }
+  .featured-event {
+    padding-block: 2rem;
+    text-align: center;
+  }
+  .featured-event img {
+    max-width: min(420px, 90%);
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
   }
   .two-col {
     display: grid;
