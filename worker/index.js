@@ -1,5 +1,3 @@
-import md5 from 'blueimp-md5';
-
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -54,36 +52,42 @@ async function handleSubscribe(request, env, url) {
   }
 
   const dataCenter = env.MAILCHIMP_API_KEY.split('-').pop();
-  const subscriberHash = md5(email.toLowerCase());
 
-  const mailchimpResponse = await fetch(
-    `https://${dataCenter}.api.mailchimp.com/3.0/lists/${env.MAILCHIMP_LIST_ID}/members/${subscriberHash}`,
-    {
-      method: 'PUT',
-      headers: {
-        Authorization: `Basic ${btoa(`anystring:${env.MAILCHIMP_API_KEY}`)}`,
-        'Content-Type': 'application/json',
+  // Plain create — deliberately POST /members, not PUT /members/{hash} (which
+  // is an upsert). If this email already exists in the audience, Mailchimp
+  // rejects the request outright (400, title "Member Exists") instead of
+  // modifying the existing row. That's intentional: this form must only ever
+  // add new contacts, never touch an existing donor's name/address/phone —
+  // this audience has real people's mailing info on file for tax receipts.
+  const mailchimpResponse = await fetch(`https://${dataCenter}.api.mailchimp.com/3.0/lists/${env.MAILCHIMP_LIST_ID}/members`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Basic ${btoa(`anystring:${env.MAILCHIMP_API_KEY}`)}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      email_address: email,
+      status: 'subscribed',
+      merge_fields: {
+        FNAME: firstName,
+        LNAME: lastName,
+        ADDRESS: { addr1, addr2, city, state, zip, country: 'US' },
+        ...(phone ? { PHONE: phone } : {}),
       },
-      body: JSON.stringify({
-        email_address: email,
-        // status_if_new (not status): sets status only when creating a new member,
-        // and leaves an existing member's subscription status untouched on update —
-        // avoids silently re-subscribing someone who'd previously opted out.
-        status_if_new: 'subscribed',
-        merge_fields: {
-          FNAME: firstName,
-          LNAME: lastName,
-          ADDRESS: { addr1, addr2, city, state, zip, country: 'US' },
-          ...(phone ? { PHONE: phone } : {}),
-        },
-      }),
-    }
-  );
+    }),
+  });
 
   if (!mailchimpResponse.ok) {
+    const body = await mailchimpResponse.json().catch(() => null);
+    if (mailchimpResponse.status === 400 && body?.title === 'Member Exists') {
+      // Already on the list — nothing to change, this isn't a failure from
+      // the visitor's point of view. Redirect to the same success page
+      // without ever attempting to write anything.
+      return Response.redirect(`${url.origin}/thank-you/`, 303);
+    }
     // Log Mailchimp's own error body — e.g. a malformed merge field — instead
     // of just knowing *that* it failed.
-    console.error('Mailchimp API error:', mailchimpResponse.status, await mailchimpResponse.text());
+    console.error('Mailchimp API error:', mailchimpResponse.status, JSON.stringify(body));
     return redirectWithError(url, 'mailchimp-error');
   }
 
