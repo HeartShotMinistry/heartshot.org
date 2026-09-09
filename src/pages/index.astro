@@ -1,6 +1,5 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import RangeInfo from '../components/RangeInfo.astro';
 import { getEntry, getCollection, render } from 'astro:content';
 import { site } from '../data/site';
 
@@ -14,6 +13,8 @@ const featuredEvent = (await getCollection('events', ({ data }) => data.publishe
 ---
 
 <BaseLayout title={entry!.data.title} description={entry!.data.description}>
+  <div class="hero-bg" aria-hidden="true"></div>
+
   <section class="hero">
     <div class="container hero-inner">
       <img
@@ -30,6 +31,12 @@ const featuredEvent = (await getCollection('events', ({ data }) => data.publishe
     </div>
   </section>
 
+  <section class="intro">
+    <div class="container prose">
+      <Content />
+    </div>
+  </section>
+
   {featuredEvent?.data.flyer && (
     <section class="featured-event">
       <div class="container">
@@ -39,22 +46,27 @@ const featuredEvent = (await getCollection('events', ({ data }) => data.publishe
       </div>
     </section>
   )}
-
-  <section class="section">
-    <div class="container two-col">
-      <div class="prose">
-        <Content />
-      </div>
-      <aside class="card">
-        <RangeInfo />
-      </aside>
-    </div>
-  </section>
 </BaseLayout>
 
 <style>
+  .hero-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: url('/images/gallery/arrows-blurred-background.jpg') center / cover no-repeat;
+  }
+  .hero-bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    /* Light scrim so the logo/buttons stay legible over a busy photo,
+       while keeping the site's airy, light-background feel. */
+    background: linear-gradient(180deg, rgba(250, 248, 245, 0.55), rgba(250, 248, 245, 0.85));
+  }
   .hero {
-    background: linear-gradient(180deg, var(--color-taupe-light), var(--color-bg));
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
     padding: 3rem 0 2.5rem;
     text-align: center;
   }
@@ -74,7 +86,22 @@ const featuredEvent = (await getCollection('events', ({ data }) => data.publishe
     flex-wrap: wrap;
     justify-content: center;
   }
+  .intro {
+    position: relative;
+    background: var(--color-bg);
+    padding-top: 2.5rem;
+    text-align: center;
+  }
+  .intro .prose {
+    max-width: 42rem;
+    margin: 0 auto;
+  }
+  .intro :global(h2) {
+    margin: 0;
+  }
   .featured-event {
+    position: relative;
+    background: var(--color-bg);
     padding-block: 2rem;
     text-align: center;
   }
@@ -84,14 +111,5 @@ const featuredEvent = (await getCollection('events', ({ data }) => data.publishe
     height: auto;
     border-radius: var(--radius);
     box-shadow: var(--shadow);
-  }
-  .two-col {
-    display: grid;
-    grid-template-columns: 1.6fr 1fr;
-    gap: 2.5rem;
-    align-items: start;
-  }
-  @media (max-width: 720px) {
-    .two-col { grid-template-columns: 1fr; }
   }
 </style>
