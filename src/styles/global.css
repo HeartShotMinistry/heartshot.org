@@ -108,11 +108,17 @@ a:hover { color: var(--color-maroon-dark); }
 }
 
 .section {
-  padding: 3.5rem 0;
+  /* padding-block (not the padding shorthand) so this can't collide with
+     .container's horizontal padding when both classes land on the same
+     element (class="section container") — a plain `padding: 3.5rem 0` here
+     would silently zero out .container's left/right padding whenever this
+     rule happens to come later in source order, since equal-specificity
+     shorthand rules override every side, not just the ones that differ. */
+  padding-block: 3.5rem;
 }
 
 .section-tight {
-  padding: 2rem 0;
+  padding-block: 2rem;
 }
 
 .eyebrow {
