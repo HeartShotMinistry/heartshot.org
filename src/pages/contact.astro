@@ -1,9 +1,9 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import { getEntry, render } from 'astro:content';
-import { site } from '../data/site';
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getEntry, render } from "astro:content";
+import { site } from "../data/site";
 
-const entry = await getEntry('pages', 'contact');
+const entry = await getEntry("pages", "contact");
 const { Content } = await render(entry!);
 ---
 
@@ -15,7 +15,9 @@ const { Content } = await render(entry!);
 
     <!-- Posts to Formspree (see src/data/site.ts -> forms.contactEndpoint). -->
     <form action={site.forms.contactEndpoint} method="POST" class="card">
-      {/* Without this, Formspree shows its own generic thanks page instead of ours. */}
+      {
+        /* Without this, Formspree shows its own generic thanks page instead of ours. */
+      }
       <input type="hidden" name="_next" value={`${site.url}/thank-you/`} />
 
       <label for="name">Your Name *</label>
@@ -34,15 +36,18 @@ const { Content } = await render(entry!);
     </form>
 
     <p class="direct-contact">
-      Prefer email or a call? Reach us directly at
-      <a href={`mailto:${site.email}`}>{site.email}</a> or
-      <a href={`tel:${site.phone.replace(/[^0-9]/g, '')}`}>{site.phone}</a>.
+      Prefer email or a call? Reach us directly at <a
+        href={`mailto:${site.email}`}>{site.email}</a
+      > or <a href={`tel:${site.phone.replace(/[^0-9]/g, "")}`}>{site.phone}</a
+      >.
     </p>
   </section>
 </BaseLayout>
 
 <style>
-  .narrow { max-width: 32rem; }
+  .narrow {
+    max-width: 32rem;
+  }
   .direct-contact {
     text-align: center;
     color: var(--color-text-muted);
