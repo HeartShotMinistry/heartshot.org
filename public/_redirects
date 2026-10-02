@@ -1,0 +1,47 @@
+# Redirects from the old WordPress site's URLs, served by Cloudflare as real
+# HTTP redirects. Format: <old path> <new path> <status>
+#
+# 301 = permanent (the old URL is gone for good).
+# 302 = temporary. Used for event pages because their targets come and go as
+#       events are published/unpublished — a 301 would get cached by browsers
+#       and keep sending people to /events/ even after the event page returns.
+# Both slash variants are listed because they match as separate paths.
+
+# Pages that were renamed
+/about-2         /about/    301
+/about-2/        /about/    301
+/contact-us      /contact/  301
+/contact-us/     /contact/  301
+
+# Empty or stale pages
+/gallery                       /  301
+/gallery/                      /  301
+/news                          /  301
+/news/                         /  301
+/category/uncategorized        /  301
+/category/uncategorized/       /  301
+/matchup-registration-payment  /  301
+/matchup-registration-payment/ /  301
+
+# Event pages (targets vary by season). When an event is published again,
+# point its entry at /events/<slug>/ instead — e.g. the Trivia Night flyer
+# prints heartshot.org/trivia-night/.
+/trivia-night            /events/  302
+/trivia-night/           /events/  302
+/golfouting              /events/  302
+/golfouting/             /events/  302
+/archerycamp             /events/  302
+/archerycamp/            /events/  302
+/new-years               /events/  302
+/new-years/              /events/  302
+/new-years-payment       /events/  302
+/new-years-payment/      /events/  302
+
+# Old raffle/shop page (PayPal raffle button + Google Forms)
+/shop   /donate/  302
+/shop/  /donate/  302
+
+# PDFs that used to live in the WordPress media library
+/wp-content/uploads/2019/02/Heart-Shot-Liability-Release-Form.pdf  /files/liability-release.pdf               301
+/wp-content/uploads/2020/04/Non-cash_Giving.pdf                    /files/non-cash-giving.pdf               301
+/wp-content/uploads/2026/04/Golf-Outing-Registration-2026.pdf      /files/golf-outing-registration-2026.pdf 301

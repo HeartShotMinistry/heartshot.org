@@ -11,7 +11,7 @@ import { site } from '../data/site';
       <ul class="hours">
         {range.hours.map((h) => <li>{h}</li>)}
       </ul>
-      <p class="note">{range.note}</p>
+      {range.note && <p class="note">{range.note}</p>}
     </div>
   ))}
   <p class="contact-line">
