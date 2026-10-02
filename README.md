@@ -89,6 +89,12 @@ Since hosting and DNS both live in Cloudflare, this is simpler than a cross-vend
 3. In the Worker project's **Settings → Domains & Routes** (or **Triggers**, naming varies), add `heartshot.org` (and `www` if wanted) — Cloudflare adds the necessary DNS records itself since it already manages the zone.
 4. Confirm the site loads over HTTPS and send a test email to the domain to confirm mail still works.
 
+## Redirects from the old WordPress URLs
+
+`public/_redirects` maps the old site's URLs to their new homes (served by Cloudflare as real HTTP redirects). It covers renamed pages (`/about-2/`, `/contact-us/`), the old PDF uploads (`/wp-content/uploads/...`), and the seasonal event pages.
+
+**Event redirects are temporary (302) and currently point at `/events/`**, because the event pages only exist while published. When you publish an event again, edit its line in `_redirects` to point at the real page — for example `/trivia-night/ /events/trivia-night/ 302`. This matters because the Trivia Night flyer prints `heartshot.org/trivia-night/`.
+
 ## What's not migrated yet
 
 - **Media library** — only images/PDFs actually used by a page were pulled over from the old WordPress media library (191 items existed there; most were auto-generated thumbnail sizes not needed here).
