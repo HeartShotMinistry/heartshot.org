@@ -22,7 +22,11 @@ export const site = {
       name: 'Davenport Range',
       address: ['Adventure Christian Community', '6509 Northwest Blvd.', 'Davenport, IA 52806'],
       hours: ['Mon & Tue: 6:30–8:30pm', 'Sat: 10:00am–12:00pm'],
-      note: "We share the space with the Adventure Youth Group, who use it Thursdays, so we don't run Thursday sessions.",
+    },
+    {
+      name: 'Kansas City Range',
+      address: ['151st Street Church of Christ', '13875 W 151st Street', 'Olathe, KS 66062'],
+      hours: ['First Sunday of every month: 6:30–8:30pm'],
     },
     {
       name: 'Base Camp 3D Range (Eldridge)',
