@@ -29,10 +29,10 @@ export const site = {
       hours: ['First Sunday of every month: 6:30–8:30pm'],
     },
     {
-      name: 'Base Camp 3D Range (Eldridge)',
+      name: 'Base Camp 3D Range (Donahue)',
       address: ['27580 95th Ave', 'Donahue, IA 52746'],
       hours: ['Open Memorial Day through Labor Day'],
-      note: '20 targets winding through timber. Donation based (collection mailbox at the range entrance). Base Camp can accommodate groups who want outdoor archery, camping, etc. Please contact Troy Bendickson',
+      note: 'Targets winding through the woods. Donation based (collection mailbox at the range entrance). Base Camp can accommodate groups who want outdoor archery, camping, etc. Please contact Troy Bendickson',
     },
   ],
 
